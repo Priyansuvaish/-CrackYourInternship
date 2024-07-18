@@ -1,37 +1,32 @@
 class Solution {
 public:
     map<string,pair<int,int>>mp;
-    int ans=0;
-    void subset(vector<string>& strs,int i,int m,int n,int c){
-        if(m<0||n<0)return;
-        if(m==0 && n==0||i>=strs.size()){
-            ans=max(ans,c);
-            return;
+    vector<vector<vector<int>>>dp;
+    int subset(vector<string>& strs,int i,int m,int n){
+        if(m<0||n<0||i>=strs.size())return 0;
+        if(dp[m][n][i]!=-1){
+            return dp[m][n][i];
         }
         int newm = mp[strs[i]].first;
         int newn = mp[strs[i]].second;
         
-        if(m>=newm&&n>=newn)subset(strs,i+1,m-newm,n-newn,c+1);
-        subset(strs,i+1,m,n,c);
+        if(m>=newm&&n>=newn)return dp[m][n][i]= max(1+subset(strs,i+1,m-newm,n-newn),subset(strs,i+1,m,n));
+
+        return dp[m][n][i]=subset(strs,i+1,m,n);
 
     }
     int findMaxForm(vector<string>& strs, int m, int n) {
-        vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
-        
-        // Loop through each string in strs
-        for (const string& str : strs) {
-            int count0 = count(str.begin(), str.end(), '0');
-            int count1 = str.size() - count0;
-            
-            // Update the DP array from bottom to top and right to left
-            for (int i = m; i >= count0; --i) {
-                for (int j = n; j >= count1; --j) {
-                    dp[i][j] = max(dp[i][j], dp[i - count0][j - count1] + 1);
-                }
+        int ns = strs.size();
+        dp.resize(m+1,vector<vector<int>>(n+1,vector<int>(ns+1,-1)));
+        for(int i=0;i<ns;i++){
+            int oo=0,oe=0;
+            for(auto j:strs[i]){
+                if(j=='0')oo++;
+                else oe++;
             }
+            mp[strs[i]]={oo,oe};
+
         }
-        
-        // The answer is the maximum number of strings that can be formed with m 0's and n 1's
-        return dp[m][n];
+        return subset(strs,0,m,n);
     }
 };
