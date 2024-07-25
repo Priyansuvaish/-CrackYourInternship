@@ -1,50 +1,42 @@
 class Solution {
 public:
     int c = 0;
-    int revPairs(vector<int> &a, vector<int> &b){
-        int count = 0;
-        int i=0; // a
-        int j=0; // b
-        while(i<a.size() && j<b.size()){
-            long long int bruh = b[j];
-            if(a[i]>2*bruh){
-                count += a.size()-i;
-                j++;
+    void revPairs(vector<int>&nums, int i,int m,int n,int j){
+        int mid=n;
+        while(i<=m){
+            long long int bru=nums[n];
+            while(n<=j&&nums[i]>2*bru){
+                n++;
+                bru=nums[n];
             }
-            else{ // a[i]<=b[j];
-                i++;
-            }
+            c+=n-mid;
+            i++;
         }
-        return count;
     }
-    void merge(vector<int> &a, vector<int> &b, vector<int> &res){
-        int i=0, j=0, k=0;
-        while(i<a.size()&&j<b.size()){
-            if(a[i]<=b[j]) res[k++] = a[i++];
-            else res[k++] = b[j++];
+    void merge(vector<int>&nums, int i,int m,int n,int j){
+        vector<int>t;
+        int s=i,mid=m,e=j;
+        while(s<=mid&& n<=e){
+            if(nums[s]<nums[n]){t.push_back(nums[s]);s++;}
+            else{ t.push_back(nums[n]);n++;}
         }
-        if(i==a.size()) while(j<b.size()) res[k++] = b[j++];
-        else if(j==b.size()) while(i<a.size()) res[k++] = a[i++];
+        while(s<=mid){t.push_back(nums[s]);s++;}
+        while(n<=j){t.push_back(nums[n]);n++;}
+        for(int st=i;st<=j;st++){
+            nums[st]=t[st-i];
+        }
     }
-    void mergeSort(vector<int> &v){
-        int n = v.size();
-        if(n==1) return;
-        int n1 = n/2, n2 = n - n/2;
-        vector<int> a(n1), b(n2);
-        // copy paste
-        for(int i=0; i<n1; i++) a[i] = v[i];
-        for(int i=0; i<n2; i++) b[i] = v[i+n1];
-        // magic
-        mergeSort(a);
-        mergeSort(b);
-        // count reverse pairs
-        c += revPairs(a,b);
-        // merge
-        merge(a,b,v);
-        a.clear(); b.clear();
+    void mergesort(vector<int>& nums,int i,int j){
+        if(i==j)return;
+        int m =(i+j)/2;
+        mergesort(nums,i,m);
+        mergesort(nums,m+1,j);
+        revPairs(nums,i,m,m+1,j);        
+        merge(nums,i,m,m+1,j);
+
     }
     int reversePairs(vector<int>& nums) {
-        mergeSort(nums);
+        mergesort(nums,0,nums.size()-1);
         return c;
     }
 };
