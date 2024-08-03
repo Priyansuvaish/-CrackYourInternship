@@ -9,7 +9,7 @@ public:
         while(j<n){
             mp[s[j]]++;
             maxfre=max(maxfre,mp[s[j]]);
-            while((j-i+1)-maxfre>k&& i<=j){
+            if((j-i+1)-maxfre>k&& i<=j){
                 mp[s[i]]--;
                 i++;
             }
