@@ -7,7 +7,7 @@ public:
         while(i<j){
             int h=min(height[i],height[j]);
             m= max(m,(j-i)*h);
-            if(height[i] <= height[j])
+            if(height[i] < height[j])
             i++;
             else j--;
         }
